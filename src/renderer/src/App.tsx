@@ -6,7 +6,7 @@ import { Content, RootLayout, Sidebar, FloatingNoteTitle, PreviewList, CreateNot
 import { INote } from './types/ReduxTypes/note'
 import { useAppDispatch } from './redux/store'
 import { deleteNote } from './redux/actions/noteActions'
-import { dialog } from 'electron'
+const { dialog } = window.electron
 
 const App = () => {
   const dispatch = useAppDispatch()

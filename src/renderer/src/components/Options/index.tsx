@@ -3,7 +3,7 @@ import { IoClose } from 'react-icons/io5'
 import { FaMinus } from 'react-icons/fa'
 import { TbCaretLeftRightFilled } from 'react-icons/tb'
 import { twMerge } from 'tailwind-merge'
-// const { ipcRenderer } = window.electron
+const { ipcRenderer, channels } = window.electron
 
 const WindowOptions = ({ className }: { className?: string }) => {
   return (
@@ -11,18 +11,20 @@ const WindowOptions = ({ className }: { className?: string }) => {
       <Button
         className="bg-[#ff5c59] hover:bg-[#ff5c59] border-none rounded-full size-4"
         icon={<IoClose className="text-black size-3" />}
-        // onClick={() => ipcRenderer.send('close-window')}
+        onClick={() => {
+          ipcRenderer.send(channels.App.Close)
+        }}
       />
       <Button
         className="bg-[#ffbc35] hover:bg-[#ffbc35] border-none rounded-full size-4"
         icon={<FaMinus className="text-black size-3" />}
-        // onClick={() => ipcRenderer.send('minimize-window')}
+        onClick={() => ipcRenderer.send(channels.App.Minimize)}
       />
 
       <Button
         className="bg-[#00cc4a] hover:bg-[#00cc4a] border-none rounded-full size-4"
         icon={<TbCaretLeftRightFilled className="rotate-45 text-black size-3" />}
-        // onClick={() => ipcRenderer.send('toggle-full-screen')}
+        onClick={() => ipcRenderer.send(channels.App.FullScreen)}
       />
     </div>
   )

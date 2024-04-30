@@ -1,5 +1,7 @@
+import { ElectronHandler } from './index'
+
 declare global {
   interface Window {
-    locale: string
+    electron: ElectronHandler
   }
 }
