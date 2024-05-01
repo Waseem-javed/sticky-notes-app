@@ -3,6 +3,10 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import channels from './channels'
+
+app.commandLine.appendSwitch('--no-sandbox')
+
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer')
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS
@@ -40,7 +44,7 @@ async function createWindow() {
     trafficLightPosition: { x: 15, y: 10 },
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
+      devTools: isDebug,
       contextIsolation: true
     }
   })
@@ -62,17 +66,17 @@ async function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 
-  // ipcMain.on('minimize-window', () => {
-  //   mainWindow.minimize()
-  // })
+  ipcMain.on(channels.App.Minimize, () => {
+    mainWindow.minimize()
+  })
 
-  // ipcMain.on('close-window', () => {
-  //   mainWindow.close()
-  // })
+  ipcMain.on(channels.App.Close, () => {
+    mainWindow.close()
+  })
 
-  // ipcMain.on('toggle-full-screen', () => {
-  //   mainWindow.setFullScreen(!mainWindow.isFullScreen())
-  // })
+  ipcMain.on(channels.App.FullScreen, () => {
+    mainWindow.setFullScreen(!mainWindow.isFullScreen())
+  })
 }
 
 // This method will be called when Electron has finished
@@ -85,14 +89,13 @@ app.whenReady().then(() => {
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
   // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  createWindow()
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
-
-  createWindow()
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
